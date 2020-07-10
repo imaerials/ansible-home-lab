@@ -1,0 +1,7 @@
+---
+ansible_user: Ansible
+ansible_password: Password123
+#ansible_password: password
+ansible_connection: winrm
+ansible_winrm_server_cert_validation: ignore
+ansible_python_interpreter: /usr/bin/python3
