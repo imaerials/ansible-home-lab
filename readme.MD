@@ -3,7 +3,7 @@
 This is just a repo to keep documented my learning path with Ansible.
 The idea is to fully automate my entire home lab setup deployment and configuration.
 
-# Requirements
+## Requirements
 
 For the lab environment Im using:
 
