@@ -1,0 +1,29 @@
+---
+# tasks file for rpi-pihole-docker
+- name: Run PIHole as container
+  docker_container:
+    name: PIHole
+    image: pihole/pihole:latest
+    ports:
+     - "53:53/tcp"
+     - "53:53/udp"
+     - "80:80"
+     - "443:443"
+    volumes:
+     - "/home/pi/etc-pihole/:/etc/pihole/"
+     - "/home/pi/etc-dnsmasq.d/:/etc/dnsmasq.d/"
+    dns_servers:
+     - "127.0.0.1"
+     - "1.1.1.1 "
+    hostname: pi.hole
+    env:
+     VIRTUAL_HOST: "pi.hole"
+     PROXY_LOCATION: "pi.hole"
+     ServerIP: "192.168.0.9"
+    restart_policy: always
+
+  register: pihole_installation
+
+- name: Debug pihole/pihole
+  debug:
+    var: pihole_installation

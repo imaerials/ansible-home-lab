@@ -1,0 +1,17 @@
+---
+- name: Create Node red Data folder
+  file:
+     path: /home/pi/docker-nodered
+     state: directory
+     group: pi
+     owner: pi
+
+
+- name: Run node-red container
+  docker_container:
+     name: node-red
+     image: nodered/node-red:latest 
+     ports: 
+      - "1880:1880"
+     volumes:
+     - "/home/pi/docker-nodered:/data"

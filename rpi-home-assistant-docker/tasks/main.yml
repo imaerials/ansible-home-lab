@@ -1,0 +1,16 @@
+---
+# tasks file for rpi-home-assistant-docker
+- name: Create Home assistant data folders
+  file:
+    path: /home/pi/homeassistant
+    state: directory
+   
+  
+- name: Create Home Asssistant Docker container
+  docker_container:
+      name: Home-Assistant # required. Assign a name to a new container or match an existing container.,When identifying an existing container name may be a name or a long or short container ID.
+      image: homeassistant/raspberrypi3-homeassistant:stable # not required. Repository path and tag used to create the container. If an image is not found or pull is true, the image will be pulled from the registry. If no tag is included, 'latest' will be used.
+      network_mode: host
+      volumes: 
+        - /home/pi/homeassistant:/config
+      restart_policy: always
