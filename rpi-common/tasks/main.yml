@@ -1,0 +1,24 @@
+---
+# tasks file for updateAll
+- name: Test Connection
+  ping:
+
+- name: Update repositories 
+  apt:
+    update_cache: yes
+  become: yes
+  register: cache_updated
+
+- name: Check if Pip is already present.
+  command: which pip
+  failed_when: false
+  changed_when: false
+  register: pip_command_result
+
+
+- name: Install Pip if not installed
+  apt:
+    pkg:
+    - python3-pip
+  when: pip_command_result.rc == 1
+  become: yes

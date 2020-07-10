@@ -1,0 +1,19 @@
+---
+# tasks file for portainer
+- name: Install python-docker
+  apt:
+   name: python-docker
+   state: present
+  become: yes
+
+- name: pull portainer image
+  docker_container:
+    name: portainer # required. Assign a name to a new container or match an existing container.,When identifying an existing container name may be a name or a long or short container ID.
+    published_ports: 9000:9000
+    image: portainer/portainer:linux-arm  # not required. Repository path and tag used to create the container. If an image is not found or pull is true, the image will be pulled from the registry. If no tag is included, 'latest' will be used.
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart_policy: always
+  become: yes
+  register: portainer_img_status
