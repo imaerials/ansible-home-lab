@@ -2,8 +2,8 @@
 - hosts: raspberry
   roles:
    - rpi-common
-   #- rpi-docker
-   #- rpi-portainer-docker
-   #- rpi-pihole-docker
-   #- rpi-nodered-docker
-   #- rpi-home-assistant-docker
+   - rpi-docker
+   - rpi-portainer-docker
+   - rpi-pihole-docker
+   - rpi-nodered-docker
+   - rpi-home-assistant-docker

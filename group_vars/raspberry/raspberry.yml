@@ -1,4 +1,5 @@
 ---
+ansible_become: yes
 ansible_user: pi
 ansible_password: controller1001
-ansible_python_interpreter: /usr/bin/python2.7
+ansible_python_interpreter: /usr/bin/python3
