@@ -14,9 +14,10 @@
      - "/home/pi/etc-dnsmasq.d/:/etc/dnsmasq.d/"
     dns_servers:
      - "127.0.0.1"
-     - "1.1.1.1 "
+     - "8.8.8.8"
     hostname: pi.hole
     env:
+     WEBPASSWORD: "pihole1001"
      VIRTUAL_HOST: "pi.hole"
      PROXY_LOCATION: "pi.hole"
      ServerIP: "192.168.0.9"
