@@ -27,6 +27,7 @@ By default the plabook will:
  - Start a  pihole container
  - Start a nodered container
  - Start a Home-assistant container
+ - Install Git
 
 You can edit/add/remove any task. 
 
