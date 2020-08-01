@@ -14,9 +14,13 @@
   changed_when: false
   register: pip_command_result
 
-
 - name: Install Pip if not installed
   apt:
     pkg:
     - python3-pip
   when: pip_command_result.rc == 1
+
+- name: Install git 
+  apt:
+    pkg:
+    - git

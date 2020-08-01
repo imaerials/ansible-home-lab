@@ -7,8 +7,9 @@
     ports:
      - "53:53/tcp"
      - "53:53/udp"
-     - "80:80"
-     - "443:443"
+     - "67:67/udp"
+     - "80:80/tcp"
+     - "443:443/tcp"
     volumes:
      - "/home/pi/etc-pihole/:/etc/pihole/"
      - "/home/pi/etc-dnsmasq.d/:/etc/dnsmasq.d/"
@@ -20,8 +21,8 @@
      WEBPASSWORD: "pihole1001"
      VIRTUAL_HOST: "pi.hole"
      PROXY_LOCATION: "pi.hole"
-     ServerIP: "192.168.0.9"
-    restart_policy: always
+     ServerIP: "127.0.0.1"
+    restart_policy: unless-stopped
 
   register: pihole_installation
 

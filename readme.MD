@@ -44,6 +44,6 @@ $ ansible-playbook rpi-playbook.yml -i inventory
 
 ### Todos
 
- - Make it more dynamic by using vars
- - Add auto detection of device (Read build tags)
- - 
+ - Create Windows playbooks / roles
+ - Improve development with vars
+ - Ansible-vault usage
