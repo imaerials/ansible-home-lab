@@ -14,8 +14,7 @@ For the lab environment Im using:
 
  * Target Machines:
     - Raspberry PI
-    - Windows 10 (Virtual Machine)
-    - Windows 2019 (Virtual Machine)
+
 
 ### About
 
@@ -45,6 +44,4 @@ $ ansible-playbook rpi-playbook.yml -i inventory
 
 ### Todos
 
- - Create Windows playbooks / roles
- - Improve development with vars
- - Ansible-vault usage
+ - Improve roles with vars

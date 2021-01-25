@@ -1,0 +1,29 @@
+---
+# tasks file for rpi-mosquitto-docker
+- name: Create Config folder for mosquitto broker
+  file:
+    path: /home/pi/mosquitto/config
+    state: directory
+   
+- name: Create Log folder for mosquitto broker
+  file:
+    path: /home/pi/mosquitto/log
+    state: directory
+   
+- name: Create data folder for mosquitto broker
+  file:
+    path: /home/pi/mosquitto/data
+    state: directory
+
+- name: Create mosquitto Docker container
+  docker_container:
+      name: Mosquitto # required. Assign a name to a new container or match an existing container.,When identifying an existing container name may be a name or a long or short container ID.
+      image: eclipse-mosquitto # not required. Repository path and tag used to create the container. If an image is not found or pull is true, the image will be pulled from the registry. If no tag is included, 'latest' will be used.
+      network_mode: bridge
+      ports:
+     - "1883:1883/tcp"
+      volumes: 
+        - /home/pi/mosquitto/data:/mosquitto/data
+        - /home/pi/mosquitto/config:/mosquitto/config
+        - /home/pi/mosquitto/log:/mosquitto/log
+      restart_policy: always
