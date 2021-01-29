@@ -1,5 +1,5 @@
 ---
 ansible_become: yes
 ansible_user: pi
-ansible_password: raspberry1310
+ansible_password: homehubuser
 ansible_python_interpreter: /usr/bin/python

@@ -9,6 +9,7 @@
 
 - name: Run node-red container
   docker_container:
+     network_mode: host
      name: node-red
      image: nodered/node-red:latest 
      ports: 
