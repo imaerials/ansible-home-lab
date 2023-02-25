@@ -1,34 +1,34 @@
 ---
-# tasks file for docker
-- name: Check if Docker is already present.
-  command: which docker
-  failed_when: false
-  changed_when: false
-  register: docker_command_result
+  - name: Update apt cache
+    apt:
+      update_cache: yes
 
-- name: Install docker when not installed. 
-  get_url:
-    url: https://get.docker.com/
-    dest: /tmp/get-docker.sh
-    mode: 0775
-  when: docker_command_result.rc == 1
+  - name: Install dependencies
+    apt:
+      name:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg2
+        - software-properties-common
+      state: present
 
-- name: Run Docker install convenience script.
-  command: /tmp/get-docker.sh
-  environment:
-    CHANNEL: stable
-  when: docker_command_result.rc == 1
+  - name: Add Docker GPG key
+    apt_key:
+      url: https://download.docker.com/linux/debian/gpg
+      state: present
 
-- name: Ensure docker users are added to the docker group.
-  user:
-    name: "{{item}}"
-    groups: docker
-    append: true
-  with_items: "{{docker_users}}"
-  become: yes
+  - name: Add Docker repository
+    apt_repository:
+      repo: deb [arch=armhf] https://download.docker.com/linux/debian bullseye stable
+      state: present
 
-- name: Ensure Docker is started.
-  service:
-    name: docker
-    state: started
-    enabled: true
+  - name: Install Docker CE
+    apt:
+      name: docker-ce
+      state: present
+
+  - name: Start Docker service
+    service:
+      name: docker
+      state: started
