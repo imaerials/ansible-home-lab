@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      register : package_update_result
+    
+    - name: debug
+      ansible.builtin.debug:
+        var: package_update_result
+
