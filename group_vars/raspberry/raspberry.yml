@@ -1,5 +1,5 @@
 ---
 ansible_become: yes
-ansible_user: "{{ username }}"
+#ansible_user: "{{ username }}"
 # ansible_password: homehubuser
 # ansible_python_interpreter: /usr/bin/python
