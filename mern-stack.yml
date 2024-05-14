@@ -66,14 +66,8 @@
       become: yes
       apt:
         name:
-          - mongodb-org=7.0.7
-          - mongodb-org-database=7.0.7
-          - mongodb-org-server=7.0.7
-          - mongodb-mongosh-shared-openssl11=2.2.5
-          - mongodb-org-mongos=7.0.7
-          - mongodb-org-tools=7.0.7
+          - mongodb-org
         state: present
-      when: "'v7.0.7' not in mongodb_version.stdout"
 
     - name: Start mongod service
       become: yes
