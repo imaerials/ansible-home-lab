@@ -48,3 +48,20 @@
         owner: root
         group: root
         mode: '0644'
+        
+    - name: Update package list
+      become: yes
+      apt:
+        update_cache: yes
+
+    - name: Install MongoDB packages
+      become: yes
+      apt:
+        name:
+          - mongodb-org=7.0.7
+          - mongodb-org-database=7.0.7
+          - mongodb-org-server=7.0.7
+          - mongodb-mongosh=7.0.7
+          - mongodb-org-mongos=7.0.7
+          - mongodb-org-tools=7.0.7
+        state: present
