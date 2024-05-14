@@ -11,6 +11,7 @@
        var: hostname_result.stdout
        
     - name: update packages
+      become: yes
       apt:
         update_cache: yes
         upgrade: dist
