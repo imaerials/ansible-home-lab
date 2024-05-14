@@ -18,13 +18,14 @@
         cache_valid_time: 3600
       register: update_result
     
-    - name: install nodejs 20 using nvm
+    - name: Install nvm
       shell: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+      register: nvm_install_result
+
+    - name: Configure nvm and install Node.js 20
+      shell: |
         export NVM_DIR="$HOME/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         nvm install 20
       register: nodejs_result
-    - name: Debug nodejs
-      debug:
-        var: nodejs_result.stdout
