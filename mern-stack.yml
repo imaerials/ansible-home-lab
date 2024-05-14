@@ -76,6 +76,7 @@
         state: started
 
     - name: Install pm2 globally
+      become: yes
       npm:
         name: pm2
         global: yes
