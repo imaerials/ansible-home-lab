@@ -46,6 +46,7 @@
       failed_when: mongodb_gpg_result.rc != 0
       changed_when: mongodb_gpg_result.rc == 0
       when: not mongodb_gpg_key.stat.exists
+
     - name: Create a list file for MongoDB
       become: yes
       copy:
@@ -61,6 +62,12 @@
       apt:
         update_cache: yes
 
+    - name: Check MongoDB version
+      command: mongod --version
+      register: mongodb_version
+      changed_when: false
+      failed_when: false
+      
     - name: Install MongoDB packages
       become: yes
       apt:
@@ -72,3 +79,10 @@
           - mongodb-org-mongos=7.0.7
           - mongodb-org-tools=7.0.7
         state: present
+      when: "'v7.0.7' not in mongodb_version.stdout"        
+
+    - name: Start mongod service
+      become: yes
+      service:
+        name: mongod
+        state: started
