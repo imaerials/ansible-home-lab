@@ -62,12 +62,6 @@
       apt:
         update_cache: yes
 
-    - name: Check MongoDB version
-      command: mongod --version
-      register: mongodb_version
-      changed_when: false
-      failed_when: false
-      
     - name: Install MongoDB packages
       become: yes
       apt:
@@ -75,14 +69,19 @@
           - mongodb-org=7.0.7
           - mongodb-org-database=7.0.7
           - mongodb-org-server=7.0.7
-          - mongodb-mongosh=2.2.5
+          - mongodb-mongosh-shared-openssl11=2.2.5
           - mongodb-org-mongos=7.0.7
           - mongodb-org-tools=7.0.7
         state: present
-      when: "'v7.0.7' not in mongodb_version.stdout"        
+      when: "'v7.0.7' not in mongodb_version.stdout"
 
     - name: Start mongod service
       become: yes
       service:
         name: mongod
         state: started
+
+    - name: Install pm2 globally
+      npm:
+        name: pm2
+        global: yes
