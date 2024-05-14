@@ -24,3 +24,27 @@
         curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
         sudo apt-get install -y nodejs
       register: nodejs_result
+
+    - name: Install gnupg and curl - mongo db reqs
+      become: yes
+      apt:
+        name:
+          - gnupg
+          - curl
+        state: present
+
+    - name: Setup MongoDB GPG key
+      become: yes
+      shell: |
+        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
+      register: mongodb_gpg_result
+
+    - name: Create a list file for MongoDB
+      become: yes
+      copy:
+        dest: /etc/apt/sources.list.d/mongodb-org-7.0.list
+        content: |
+          deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse
+        owner: root
+        group: root
+        mode: '0644'
