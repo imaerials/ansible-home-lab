@@ -18,15 +18,11 @@
       register: update_result
     
     - name: Install nvm
-      become: yes
-      become_user: ubuntu
       shell: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
       register: nvm_install_result
 
     - name: Configure nvm and install Node.js 20
-      become: yes
-      become_user: ubuntu
       shell: |
         export NVM_DIR="$HOME/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
