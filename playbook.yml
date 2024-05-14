@@ -21,10 +21,9 @@
     - name: install nodejs 20 using nvm
       shell: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-        source ~/.bashrc
         nvm install 20
       register: nodejs_result    
-      
+
     - name: Debug nodejs
       debug:
         var: nodejs_result.stdout
