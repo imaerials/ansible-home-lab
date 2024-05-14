@@ -33,12 +33,19 @@
           - curl
         state: present
 
+    - name: Check if MongoDB GPG key is already setup
+      stat:
+        path: /usr/share/keyrings/mongodb-server-7.0.gpg
+      register: mongodb_gpg_key
+
     - name: Setup MongoDB GPG key
       become: yes
       shell: |
-        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
+        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
       register: mongodb_gpg_result
-
+      failed_when: mongodb_gpg_result.rc != 0
+      changed_when: mongodb_gpg_result.rc == 0
+      when: not mongodb_gpg_key.stat.exists
     - name: Create a list file for MongoDB
       become: yes
       copy:
@@ -61,7 +68,7 @@
           - mongodb-org=7.0.7
           - mongodb-org-database=7.0.7
           - mongodb-org-server=7.0.7
-          - mongodb-mongosh=7.0.7
+          - mongodb-mongosh=2.2.5
           - mongodb-org-mongos=7.0.7
           - mongodb-org-tools=7.0.7
         state: present
