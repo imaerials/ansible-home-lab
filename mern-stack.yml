@@ -80,3 +80,11 @@
       npm:
         name: pm2
         global: yes
+
+    - name: Install Nginx web server
+      become: yes
+      apt:
+        name:
+          - nginx
+        state: present
+
