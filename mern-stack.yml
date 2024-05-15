@@ -93,11 +93,10 @@
         SSH_AUTH_SOCK: "{{ ssh_agent_env.stdout_lines[0].split('=')[1].split(';')[0] }}"
       delegate_to: localhost
       tags: ['gitclone']  
-    
+
     - name: clone github repo
       git:
         repo: git@github.com:Irionx/tu-reclamo-front-end.git
         dest: /home/semaphore/tu-reclamo-front-end
-        key_file: /home/semaphore/keys/id_ed25519
       delegate_to: localhost
       tags: ['gitclone']
