@@ -86,10 +86,11 @@
       register: ssh_agent_env
       tags: ['gitclone']
       delegate_to: localhost
-      
+
     - name: Print ssh-agent output
       debug:
         var: ssh_agent_env.stdout_lines
+      tags: ['gitclone']
 
     - name: Add SSH key
       shell: ssh-add /home/semaphore/keys/id_ed25519
