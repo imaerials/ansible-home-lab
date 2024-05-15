@@ -82,25 +82,27 @@
         state: present
 
     - name: Start SSH agent
-      shell: eval $(ssh-agent -s)
+      shell: ssh-agent -s
       register: ssh_agent_env
       tags: ['gitclone']
       delegate_to: localhost
 
-    - name: Print ssh-agent output
-      debug:
-        var: ssh_agent_env.stdout_lines
-      tags: ['gitclone']
-
     - name: Add SSH key
       shell: ssh-add /home/semaphore/keys/id_ed25519
       environment:
-        SSH_AUTH_SOCK: "{{ ssh_agent_env.stdout_lines[0].split('=')[1].split(';')[0] }}"
+        SSH_AUTH_SOCK: "{{ ssh_agent_env.stdout.split('=')[1].split(';')[0] }}"
+      delegate_to: localhost
       tags: ['gitclone']  
 
-    - name: clone github repo
+    - name: Clone github repo locally
       git:
         repo: git@github.com:Irionx/tu-reclamo-front-end.git
         dest: /home/semaphore/tu-reclamo-front-end
       delegate_to: localhost
+      tags: ['gitclone']
+
+    - name: Copy repo to EC2 instance
+      synchronize:
+        src: /home/semaphore/tu-reclamo-front-end
+        dest: /path/on/ec2/instance
       tags: ['gitclone']
