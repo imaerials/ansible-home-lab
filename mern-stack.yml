@@ -84,7 +84,7 @@
 
     - name: clone github repo
       git:
-        repo: https://github.com/imaerials/react-front-end.git
+        repo: git@github.com:imaerials/react-front-end.git
         key_file: /home/semaphore/.ssh/id_ed25519
         dest: /home/ubuntu/react-front-end
       tags: ['git-clone']
