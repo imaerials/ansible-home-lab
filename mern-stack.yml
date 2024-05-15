@@ -2,7 +2,14 @@
 - hosts: all
   gather_facts: False
   tasks:
-       
+    - name: Start ssh-agent
+      shell: eval $(ssh-agent -s)
+      register: ssh_agent_result
+
+    - name: Add ssh key to agent
+      shell: ssh-add /path/to/ssh/key
+      environment:
+        SSH_AUTH_SOCK: "{{ ssh_agent_result.stdout.split('=')[1].split(';')[0] }}"
     - name: update packages
       become: yes
       apt:
@@ -85,6 +92,5 @@
     - name: clone github repo
       git:
         repo: git@github.com:imaerials/react-front-end.git
-        key_file: /home/semaphore/.ssh/id_ed25519
         dest: /home/ubuntu/react-front-end
       tags: ['git-clone']
