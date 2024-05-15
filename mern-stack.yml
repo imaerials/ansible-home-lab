@@ -85,11 +85,13 @@
       shell: eval $(ssh-agent -s)
       register: ssh_agent_env
       tags: ['gitclone']
+    
     - name: Add SSH key
       shell: ssh-add /home/semaphore/keys/id_ed25519
       environment:
         SSH_AUTH_SOCK: "{{ ssh_agent_env.stdout_lines[0].split('=')[1].split(';')[0] }}"
       tags: ['gitclone']  
+    
     - name: clone github repo
       git:
         repo: git@github.com:Irionx/tu-reclamo-front-end.git
