@@ -2,14 +2,6 @@
 - hosts: all
   gather_facts: False
   tasks:
-    - name: Start ssh-agent
-      shell: eval $(ssh-agent -s)
-      register: ssh_agent_result
-
-    - name: Add ssh key to agent
-      shell: ssh-add /path/to/ssh/key
-      environment:
-        SSH_AUTH_SOCK: "{{ ssh_agent_result.stdout.split('=')[1].split(';')[0] }}"
     - name: update packages
       become: yes
       apt:
@@ -91,6 +83,8 @@
 
     - name: clone github repo
       git:
-        repo: git@github.com:imaerials/react-front-end.git
-        dest: /home/ubuntu/react-front-end
-      tags: ['git-clone']
+        repo: git@github.com:Irionx/tu-reclamo-front-end.git
+        dest: /path/to/local/directory
+        key_file: /home/semaphore/keys/id_ed25519
+      delegate_to: localhost
+      tags: ['gitclone']
