@@ -2,13 +2,6 @@
 - hosts: all
   gather_facts: False
   tasks:
-    - name: Get hostname
-      command: hostname
-      register: hostname_result
-    
-    - name: Debug hostname
-      debug:
-       var: hostname_result.stdout
        
     - name: update packages
       become: yes
@@ -17,13 +10,6 @@
         upgrade: dist
         cache_valid_time: 3600
       register: update_result
-    
-    - name: Setup NodeSource repository and install Node.js
-      become: yes
-      shell: |
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
-        sudo apt-get install -y nodejs
-      register: nodejs_result
 
     - name: Install gnupg and curl - mongo db reqs
       become: yes
@@ -32,6 +18,14 @@
           - gnupg
           - curl
         state: present
+    
+    - name: Setup NodeSource repository and install Node.js
+      become: yes
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+        sudo apt-get install -y nodejs
+      register: nodejs_result
+
 
     - name: Check if MongoDB GPG key is already setup
       stat:
@@ -88,3 +82,8 @@
           - nginx
         state: present
 
+    - name: clone github repo
+      git:
+        repo: https://github.com/imaerials/react-front-end.git
+        dest: /home/ubuntu/react-front-end
+      tags: ['git-clone']
