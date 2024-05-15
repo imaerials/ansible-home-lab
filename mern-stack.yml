@@ -81,6 +81,13 @@
           - nginx
         state: present
 
+    - name: Add GitHub to known hosts
+      known_hosts:
+        name: github.com
+        key: "{{ lookup('url', 'https://github.com/ssh/keys', split_lines=False) }}"
+      delegate_to: localhost
+      tags: ['gitclone']
+
     - name: Start SSH agent
       shell: ssh-agent -s
       register: ssh_agent_env
@@ -101,8 +108,3 @@
       delegate_to: localhost
       tags: ['gitclone']
 
-    - name: Copy repo to EC2 instance
-      synchronize:
-        src: /home/semaphore/tu-reclamo-front-end
-        dest: /path/on/ec2/instance
-      tags: ['gitclone']
