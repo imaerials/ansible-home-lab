@@ -2,6 +2,15 @@
 - hosts: all
   gather_facts: False
   tasks:
+    - name: Extract repository name from frontend_git_repo
+      set_fact:
+        frontend_repo_name: "{{ frontend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
+      
+
+    - name: Extract repository name from backend_git_repo
+      set_fact:
+        backend_repo_name: "{{ backend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}" 
+
     - name: update packages
       become: yes
       apt:
@@ -89,18 +98,22 @@
         mode: '0600'
       tags: ['gitclone']
 
-    - name: Extract repository name from frontend_git_repo
-      set_fact:
-        repo_name: "{{ frontend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
-      tags: ['gitclone']
-    - name: Clone private GitHub repository
+
+    - name: Clone FrontEnd GitHub private repository
       git:
         repo: "{{ frontend_git_repo }}"
-        dest: "/home/ubuntu/{{ repo_name }}"
+        dest: "/home/ubuntu/{{ frontend_repo_name }}"
         key_file: "/home/ubuntu/.ssh/{{ key_name }}"
         accept_hostkey: yes
       tags: ['gitclone']
 
+    - name: Clone BackEnd GitHub private repository
+      git:
+        repo: "{{ backend_git_repo }}"
+        dest: "/home/ubuntu/{{ backend_repo_name }}"
+        key_file: "/home/ubuntu/.ssh/{{ key_name }}"
+        accept_hostkey: yes
+      tags: ['gitclone']
     
     - name: Delete copied SSH key
       file:
