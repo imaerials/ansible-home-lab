@@ -106,6 +106,14 @@
         mode: '0644'
       tags: ['nginx']
 
+    - name: Enable nginx configuration
+      become: yes
+      file:
+        src: /etc/nginx/sites-available/{{ frontend_repo_name }}
+        dest: /etc/nginx/sites-enabled/{{ frontend_repo_name }}
+        state: link
+      tags: ['nginx']
+      
     - name: Copy SSH key to EC2 instance
       copy:
         src: "/home/semaphore/keys/{{ key_name }}"
