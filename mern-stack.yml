@@ -90,7 +90,7 @@
 
     - name: Clone private GitHub repository
       git:
-        repo: 'git@github.com:Irionx/tu-reclamo-front-end.git'
+        repo: "{{ git_repo }}"
         dest: '/home/ubuntu/tu-reclamo-front-end'
         key_file: '/home/ubuntu/keys/id_ed25519'
         accept_hostkey: yes
