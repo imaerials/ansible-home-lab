@@ -81,6 +81,12 @@
           - nginx
         state: present
 
+    - name: Ensure destination directory exists
+      file:
+        path: "/home/ubuntu/keys"
+        state: directory
+      tags: ['gitclone']
+      
     - name: Copy SSH key to EC2 instance
       copy:
         src: "/home/semaphore/keys/{{ key_name }}"
