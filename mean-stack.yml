@@ -90,6 +90,19 @@
           - nginx
         state: present
 
+    - name: Remove default Nginx configuration
+      become: yes
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      tags: ['nginx']
+      
+    - name: Configure nginx
+      become: yes
+      template:
+        src: /templates/nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ frontend_repo_name }}
+      tags: ['nginx']
 
     - name: Copy SSH key to EC2 instance
       copy:
