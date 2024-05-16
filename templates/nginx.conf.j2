@@ -1,11 +1,7 @@
 server {
     listen 80;
     location / {
-        root var/www/tureclamo-frontend/angular;
-        try_files $uri $uri/ /index.html;
-    }
-    location /react {
-        root /var/www/{{ frontend_repo_name }}/react;
+        root var/www/{{ backend_repo_name }}/angular;
         try_files $uri $uri/ /index.html;
     }
     location /api {
