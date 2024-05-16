@@ -94,13 +94,13 @@
         mode: '0600'
       tags: ['gitclone']
 
-    - name: Extract repository name from git_repo
+    - name: Extract repository name from frontend_git_repo
       set_fact:
-        repo_name: "{{ git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
+        repo_name: "{{ frontend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
       tags: ['gitclone']
     - name: Clone private GitHub repository
       git:
-        repo: "{{ git_repo }}"
+        repo: "{{ frontend_git_repo }}"
         dest: "/home/ubuntu/{{ repo_name }}"
         key_file: "/home/ubuntu/.ssh/{{ key_name }}"
         accept_hostkey: yes
