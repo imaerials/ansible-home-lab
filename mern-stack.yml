@@ -86,6 +86,7 @@
         repo: 'git@github.com:Irionx/tu-reclamo-front-end.git'
         dest: '/home/ubuntu/tu-reclamo-front-end'
         key_file: '/home/semaphore/keys/id_ed25519'
+        accept_hostkey: yes
       tags: ['gitclone']
 
 
