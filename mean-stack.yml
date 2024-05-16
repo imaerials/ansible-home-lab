@@ -143,3 +143,11 @@
        path: '/home/ubuntu/.ssh/{{ key_name }}'
        state: absent
       tags: ['gitclone']
+
+    - name: start pm2 for backend
+      become: yes
+      shell: |
+        cd /home/ubuntu/{{ backend_repo_name }}
+        npm install
+        pm2 start app.js
+      tags: ['pm2']
