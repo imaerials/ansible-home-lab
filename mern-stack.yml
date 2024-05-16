@@ -86,11 +86,11 @@
         path: "/home/ubuntu/keys"
         state: directory
       tags: ['gitclone']
-      
+
     - name: Copy SSH key to EC2 instance
       copy:
         src: "/home/semaphore/keys/{{ key_name }}"
-        dest: "/home/ubuntu/keys/{{ key_name }}"
+        dest: "/home/ubuntu/.ssh/{{ key_name }}"
         mode: '0600'
       tags: ['gitclone']
 
