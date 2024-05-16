@@ -2,14 +2,6 @@
 - hosts: all
   gather_facts: False
   tasks:
-    - name: Get hostname
-      command: hostname
-      register: hostname_result
-    
-    - name: Debug hostname
-      debug:
-       var: hostname_result.stdout
-       
     - name: update packages
       become: yes
       apt:
@@ -17,13 +9,6 @@
         upgrade: dist
         cache_valid_time: 3600
       register: update_result
-    
-    - name: Setup NodeSource repository and install Node.js
-      become: yes
-      shell: |
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
-        sudo apt-get install -y nodejs
-      register: nodejs_result
 
     - name: Install gnupg and curl - mongo db reqs
       become: yes
@@ -32,6 +17,14 @@
           - gnupg
           - curl
         state: present
+    
+    - name: Setup NodeSource repository and install Node.js
+      become: yes
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+        sudo apt-get install -y nodejs
+      register: nodejs_result
+
 
     - name: Check if MongoDB GPG key is already setup
       stat:
@@ -88,3 +81,29 @@
           - nginx
         state: present
 
+
+    - name: Copy SSH key to EC2 instance
+      copy:
+        src: "/home/semaphore/keys/{{ key_name }}"
+        dest: "/home/ubuntu/.ssh/{{ key_name }}"
+        mode: '0600'
+      tags: ['gitclone']
+
+    - name: Extract repository name from frontend_git_repo
+      set_fact:
+        repo_name: "{{ frontend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
+      tags: ['gitclone']
+    - name: Clone private GitHub repository
+      git:
+        repo: "{{ frontend_git_repo }}"
+        dest: "/home/ubuntu/{{ repo_name }}"
+        key_file: "/home/ubuntu/.ssh/{{ key_name }}"
+        accept_hostkey: yes
+      tags: ['gitclone']
+
+    
+    - name: Delete copied SSH key
+      file:
+       path: '/home/ubuntu/.ssh/{{ key_name }}'
+       state: absent
+      tags: ['gitclone']
