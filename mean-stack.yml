@@ -122,21 +122,23 @@
       tags: ['gitclone']
 
 
-    - name: Clone FrontEnd GitHub private repository
-      git:
+    - name: Clone FrontEnd GitHub private repository on controller
+      local_action:
+        module: git
         repo: "{{ frontend_git_repo }}"
-        dest: "/home/ubuntu/{{ frontend_repo_name }}"
-        key_file: "/home/ubuntu/.ssh/{{ key_name }}"
+        dest: "/home/semaphore/{{ frontend_repo_name }}"
+        key_file: "/home/semaphore/keys/{{ key_name }}"
         accept_hostkey: yes
-      tags: ['gitclone']
+      tags: ['gitclone', 'localclone']
 
-    - name: Clone BackEnd GitHub private repository
-      git:
+    - name: Clone BackEnd GitHub private repository on controller
+      local_action:
+        module: git
         repo: "{{ backend_git_repo }}"
-        dest: "/home/ubuntu/{{ backend_repo_name }}"
-        key_file: "/home/ubuntu/.ssh/{{ key_name }}"
+        dest: "/home/semaphore/{{ backend_repo_name }}"
+        key_file: "/home/semaphore/keys/{{ key_name }}"
         accept_hostkey: yes
-      tags: ['gitclone']
+      tags: ['gitclone','localclone']
     
     - name: Delete copied SSH key
       file:
