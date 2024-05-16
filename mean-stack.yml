@@ -1,0 +1,145 @@
+---
+- hosts: all
+  gather_facts: False
+  tasks:
+    - name: Extract repository name from frontend_git_repo
+      set_fact:
+        frontend_repo_name: "{{ frontend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
+      tags: always
+
+    - name: Extract repository name from backend_git_repo
+      set_fact:
+        backend_repo_name: "{{ backend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}" 
+      tags: always
+
+    - name: update packages
+      become: yes
+      apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+      register: update_result
+
+    - name: Install gnupg and curl - mongo db reqs
+      become: yes
+      apt:
+        name:
+          - gnupg
+          - curl
+        state: present
+    
+    - name: Setup NodeSource repository and install Node.js
+      become: yes
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+        sudo apt-get install -y nodejs
+      register: nodejs_result
+
+
+    - name: Check if MongoDB GPG key is already setup
+      stat:
+        path: /usr/share/keyrings/mongodb-server-7.0.gpg
+      register: mongodb_gpg_key
+
+    - name: Setup MongoDB GPG key
+      become: yes
+      shell: |
+        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
+      register: mongodb_gpg_result
+      failed_when: mongodb_gpg_result.rc != 0
+      changed_when: mongodb_gpg_result.rc == 0
+      when: not mongodb_gpg_key.stat.exists
+
+    - name: Create a list file for MongoDB
+      become: yes
+      copy:
+        dest: /etc/apt/sources.list.d/mongodb-org-7.0.list
+        content: |
+          deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse
+        owner: root
+        group: root
+        mode: '0644'
+        
+    - name: Update package list
+      become: yes
+      apt:
+        update_cache: yes
+
+    - name: Install MongoDB packages
+      become: yes
+      apt:
+        name:
+          - mongodb-org
+        state: present
+
+    - name: Start mongod service
+      become: yes
+      service:
+        name: mongod
+        state: started
+
+    - name: Install pm2 globally
+      become: yes
+      npm:
+        name: pm2
+        global: yes
+
+    - name: Install Nginx web server
+      become: yes
+      apt:
+        name:
+          - nginx
+        state: present
+
+    - name: Remove default Nginx configuration
+      become: yes
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      tags: ['nginx']
+
+    - name: Configure nginx
+      become: yes
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ frontend_repo_name }}
+        mode: '0644'
+      tags: ['nginx']
+
+    - name: Enable nginx configuration
+      become: yes
+      file:
+        src: /etc/nginx/sites-available/{{ frontend_repo_name }}
+        dest: /etc/nginx/sites-enabled/{{ frontend_repo_name }}
+        state: link
+      tags: ['nginx']
+      
+    - name: Copy SSH key to EC2 instance
+      copy:
+        src: "/home/semaphore/keys/{{ key_name }}"
+        dest: "/home/ubuntu/.ssh/{{ key_name }}"
+        mode: '0600'
+      tags: ['gitclone']
+
+
+    - name: Clone FrontEnd GitHub private repository
+      git:
+        repo: "{{ frontend_git_repo }}"
+        dest: "/home/ubuntu/{{ frontend_repo_name }}"
+        key_file: "/home/ubuntu/.ssh/{{ key_name }}"
+        accept_hostkey: yes
+      tags: ['gitclone']
+
+    - name: Clone BackEnd GitHub private repository
+      git:
+        repo: "{{ backend_git_repo }}"
+        dest: "/home/ubuntu/{{ backend_repo_name }}"
+        key_file: "/home/ubuntu/.ssh/{{ key_name }}"
+        accept_hostkey: yes
+      tags: ['gitclone']
+    
+    - name: Delete copied SSH key
+      file:
+       path: '/home/ubuntu/.ssh/{{ key_name }}'
+       state: absent
+      tags: ['gitclone']
