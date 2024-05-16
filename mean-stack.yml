@@ -11,7 +11,7 @@
       set_fact:
         backend_repo_name: "{{ backend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}" 
       tags: always
-      
+
     - name: update packages
       become: yes
       apt:
@@ -97,11 +97,13 @@
         path: /etc/nginx/sites-enabled/default
         state: absent
       tags: ['nginx']
+
     - name: Configure nginx
       become: yes
       template:
-        src: /templates/nginx.conf.j2
+        src: nginx.conf.j2
         dest: /etc/nginx/sites-available/{{ frontend_repo_name }}
+        mode: '0644'
       tags: ['nginx']
 
     - name: Copy SSH key to EC2 instance
