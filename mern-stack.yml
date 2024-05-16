@@ -81,30 +81,11 @@
           - nginx
         state: present
 
-    - name: Add GitHub to known hosts
-      known_hosts:
-        name: github.com
-        key: "{{ lookup('url', 'https://github.com/ssh/keys', split_lines=False) }}"
-      delegate_to: localhost
-      tags: ['gitclone']
-
-    - name: Start SSH agent
-      shell: ssh-agent -s
-      register: ssh_agent_env
-      tags: ['gitclone']
-      delegate_to: localhost
-
-    - name: Add SSH key
-      shell: ssh-add /home/semaphore/keys/id_ed25519
-      environment:
-        SSH_AUTH_SOCK: "{{ ssh_agent_env.stdout.split('=')[1].split(';')[0] }}"
-      delegate_to: localhost
-      tags: ['gitclone']  
-
-    - name: Clone github repo locally
+    - name: Clone private GitHub repository
       git:
-        repo: git@github.com:Irionx/tu-reclamo-front-end.git
-        dest: /home/semaphore/tu-reclamo-front-end
-      delegate_to: localhost
+        repo: 'git@github.com:Irionx/tu-reclamo-front-end.git'
+        dest: '/home/ubuntu/tu-reclamo-front-end'
+        key_file: '/home/semaphore/keys/id_ed25519'
       tags: ['gitclone']
+
 
