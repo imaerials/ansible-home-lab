@@ -96,9 +96,8 @@
 
     - name: Extract repository name from git_repo
       set_fact:
-        repo_name: "{{ git_repo | urlsplit('path') | regex_replace('.git$', '') | regex_replace('^/', '') }}"
+        repo_name: "{{ git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
       tags: ['gitclone']
-
     - name: Clone private GitHub repository
       git:
         repo: "{{ git_repo }}"
