@@ -5,11 +5,12 @@
     - name: Extract repository name from frontend_git_repo
       set_fact:
         frontend_repo_name: "{{ frontend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}"
-      
+      tags: always
 
     - name: Extract repository name from backend_git_repo
       set_fact:
         backend_repo_name: "{{ backend_git_repo.split('/')[-1] | regex_replace('.git$', '') }}" 
+      tags: always
 
     - name: update packages
       become: yes
@@ -90,7 +91,29 @@
           - nginx
         state: present
 
+    - name: Remove default Nginx configuration
+      become: yes
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      tags: ['nginx']
 
+    - name: Configure nginx
+      become: yes
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ frontend_repo_name }}
+        mode: '0644'
+      tags: ['nginx']
+
+    - name: Enable nginx configuration
+      become: yes
+      file:
+        src: /etc/nginx/sites-available/{{ frontend_repo_name }}
+        dest: /etc/nginx/sites-enabled/{{ frontend_repo_name }}
+        state: link
+      tags: ['nginx']
+      
     - name: Copy SSH key to EC2 instance
       copy:
         src: "/home/semaphore/keys/{{ key_name }}"
