@@ -83,17 +83,27 @@
 
     - name: Copy SSH key to EC2 instance
       copy:
-        src: /home/semaphore/keys/id_ed25519
-        dest: /home/ubuntu/.ssh/id_ed25519
+        src: "/home/semaphore/keys/{{ key_name }}"
+        dest: "/home/semaphore/keys/{{ key_name }}"
         mode: '0600'
+      tags: ['gitclone']
+
+    - name: Extract repository name from git_repo
+      set_fact:
+        repo_name: "{{ git_repo | urlsplit('path') | regex_replace('.git$', '') | regex_replace('^/', '') }}"
       tags: ['gitclone']
 
     - name: Clone private GitHub repository
       git:
         repo: "{{ git_repo }}"
-        dest: '/home/ubuntu/tu-reclamo-front-end'
-        key_file: '/home/ubuntu/.ssh/id_ed25519'
+        dest: "/home/ubuntu/{{ repo_name }}"
+        key_file: "/home/ubuntu/.ssh/{{ key_name }}"
         accept_hostkey: yes
       tags: ['gitclone']
 
-
+    
+    - name: Delete copied SSH key
+      file:
+       path: '/home/ubuntu/.ssh/{{ key_name }}'
+       state: absent
+      tags: ['gitclone']
