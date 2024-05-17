@@ -147,7 +147,7 @@
     - name: configure pm2 with template
       become: yes
       template:
-        src: pm2.config.js.j2
+        src: pm2.config.cjs.j2
         dest: /home/ubuntu/{{ backend_repo_name }}/ecosystem.config.cjs
         mode: '0644'
       tags: ['pm2config']
