@@ -1,0 +1,16 @@
+module.exports = {
+  apps : [{
+    name: "{{ backend_repo_name}}-backend",
+    script: "./app.js",
+    env: {
+      NODE_ENV: "development",
+    },
+    env_production: {
+      NODE_ENV: "production",
+      MONGO_URI: "{{ APP_MONGO_URI }}",
+      PORT:"{{ APP_PORT }}",
+      NODE_MAILER_PASS: "{{ APP_MAILER_PASS }}",
+      NODE_MAILER_MAIL: "{{ APP_MAILER_MAIL }}",
+    }
+  }]
+}
