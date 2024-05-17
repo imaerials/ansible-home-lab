@@ -1,7 +1,7 @@
 server {
     listen 80;
     location / {
-        root /var/www/{{ backend_repo_name }};
+        root /var/www/{{ frontend_repo_name }};
         try_files $uri $uri/ /index.html;
     }
     location /api {
