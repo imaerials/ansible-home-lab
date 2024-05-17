@@ -143,3 +143,19 @@
        path: '/home/ubuntu/.ssh/{{ key_name }}'
        state: absent
       tags: ['gitclone']
+
+    - name: configure pm2 with template
+      become: yes
+      template:
+        src: pm2.config.js.j2
+        dest: /home/ubuntu/{{ backend_repo_name }}/ecosystem.config.cjs
+        mode: '0644'
+      tags: ['pm2config']
+
+    - name: start pm2 for backend
+      become: yes
+      shell: |
+        cd /home/ubuntu/{{ backend_repo_name }}
+        npm install
+        pm2 start ecosystem.config.cjs --env production
+      tags: ['pm2start']
