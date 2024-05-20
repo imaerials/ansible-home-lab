@@ -154,6 +154,11 @@
         npm run build
       tags: ['frontend']
 
+    - name: Move FrontEnd repository
+      become: yes
+      command: mv /home/ubuntu/{{ frontend_repo_name }}/build /var/www/{{ frontend_repo_name }}
+      tags: ['move']
+
     - name: configure pm2 with template
       become: yes
       template:
