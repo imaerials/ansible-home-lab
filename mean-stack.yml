@@ -130,6 +130,8 @@
         accept_hostkey: yes
       tags: ['gitclone']
 
+
+
     - name: Clone BackEnd GitHub private repository
       git:
         repo: "{{ backend_git_repo }}"
@@ -143,6 +145,19 @@
        path: '/home/ubuntu/.ssh/{{ key_name }}'
        state: absent
       tags: ['gitclone']
+
+    - name: Build Front 
+      become: yes
+      shell: |
+        cd /home/ubuntu/{{ frontend_repo_name }}
+        npm install
+        npm run build
+      tags: ['frontend']
+
+    - name: Move FrontEnd repository
+      become: yes
+      command: mv /home/ubuntu/{{ frontend_repo_name }}/build /var/www/{{ frontend_repo_name }}
+      tags: ['move']
 
     - name: configure pm2 with template
       become: yes
@@ -159,3 +174,10 @@
         npm install
         pm2 start ecosystem.config.cjs --env production
       tags: ['pm2start']
+      
+    - name: Restart Nginx
+      become: yes
+      service:
+        name: nginx
+        state: restarted
+      tags: ['nginx']
