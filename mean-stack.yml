@@ -154,9 +154,20 @@
         npm run build
       tags: ['frontend']
 
-    - name: Move FrontEnd repository
+    - name: Check for directories and move the first one found
+      block:
+        - name: Check if directory exists
+          stat:
+            path: "/home/ubuntu/{{ frontend_repo_name }}/{{ item }}"
+          register: dir
+          with_items:
+            - build
+            - dist
+
+    - name: Move directory if it exists
+      command: "mv /home/ubuntu/{{ frontend_repo_name }}/{{ dir.results[0].item }} /var/www/{{ frontend_repo_name }}"
+      when: dir.results[0].stat.exists
       become: yes
-      command: mv /home/ubuntu/{{ frontend_repo_name }}/build /var/www/{{ frontend_repo_name }}
       tags: ['move']
 
     - name: configure pm2 with template
