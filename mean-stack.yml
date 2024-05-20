@@ -174,3 +174,10 @@
         npm install
         pm2 start ecosystem.config.cjs --env production
       tags: ['pm2start']
+      
+    - name: Restart Nginx
+      become: yes
+      service:
+        name: nginx
+        state: restarted
+      tags: ['nginx']
