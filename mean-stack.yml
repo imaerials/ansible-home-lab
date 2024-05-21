@@ -164,26 +164,24 @@
             - build
             - dist
 
-        - name: Get subfolder name if directory is 'dist'
-          find:
-            paths: "/home/ubuntu/{{ frontend_repo_name }}/dist"
-            file_type: directory
-          register: subfolder
+        - name: Get angular.json content
+          slurp:
+            src: "/home/ubuntu/{{ frontend_repo_name }}/angular.json"
+          register: angular_json_content
           when: item.item == 'dist' and item.stat.exists
           with_items: "{{ dir.results }}"
 
-        - name: Print subfolder
-          debug:
-            var: subfolder
-
-
-
+        - name: Get subfolder name from angular.json if directory is 'dist'
+          set_fact:
+            subfolder: "{{ (angular_json_content['content'] | b64decode | from_json)['projects']['app']['architect']['build']['options']['outputPath'] }}"
+          when: item.item == 'dist' and item.stat.exists
+          with_items: "{{ dir.results }}"
 
         - name: Set the command based on the directory
           set_fact:
             move_command: >
               {% if item.item == 'dist' %}
-              mv /home/ubuntu/{{ frontend_repo_name }}/dist/{{ subfolder.files[0].path | basename }} /var/www/{{ frontend_repo_name }}
+              mv /home/ubuntu/{{ frontend_repo_name }}/dist/{{ subfolder }} /var/www/{{ frontend_repo_name }}
               {% else %}
               mv /home/ubuntu/{{ frontend_repo_name }}/build /var/www/{{ frontend_repo_name }}
               {% endif %}
@@ -195,8 +193,7 @@
           when: item.stat.exists
           become: yes
           with_items: "{{ dir.results }}"
-      tags: ['move']      
-
+      tags: ['move']
     - name: configure pm2 with template
       become: yes
       template:
