@@ -164,11 +164,11 @@
             - build
             - dist
 
-    - name: Move directory if it exists
-      command: "mv /home/ubuntu/{{ frontend_repo_name }}/{{ dir.results[0].item }} /var/www/{{ frontend_repo_name }}"
-      when: dir.results[0].stat.exists
-      become: yes
-      tags: ['move']
+        - name: Move directory if it exists
+          command: "mv /home/ubuntu/{{ frontend_repo_name }}/{{ dir.results[0].item }} /var/www/{{ frontend_repo_name }}"
+          when: dir.results[0].stat.exists
+          become: yes
+          tags: ['move']
 
     - name: configure pm2 with template
       become: yes
