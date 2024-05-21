@@ -172,6 +172,13 @@
           when: item.item == 'dist' and item.stat.exists
           with_items: "{{ dir.results }}"
 
+        - name: Print subfolder
+          debug:
+            var: subfolder
+
+
+
+
         - name: Set the command based on the directory
           set_fact:
             move_command: >
@@ -189,7 +196,7 @@
           become: yes
           with_items: "{{ dir.results }}"
       tags: ['move']      
-      
+
     - name: configure pm2 with template
       become: yes
       template:
