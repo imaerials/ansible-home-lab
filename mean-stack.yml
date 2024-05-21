@@ -164,17 +164,31 @@
             - build
             - dist
 
+        - name: Get subfolder name if directory is 'dist'
+          find:
+            paths: "/home/ubuntu/{{ frontend_repo_name }}/dist"
+            file_type: directory
+          register: subfolder
+          when: item.item == 'dist' and item.stat.exists
+          with_items: "{{ dir.results }}"
+
+        - name: Set the command based on the directory
+          set_fact:
+            move_command: >
+              {% if item.item == 'dist' %}
+              mv /home/ubuntu/{{ frontend_repo_name }}/dist/{{ subfolder.files[0].path | basename }} /var/www/{{ frontend_repo_name }}
+              {% else %}
+              mv /home/ubuntu/{{ frontend_repo_name }}/build /var/www/{{ frontend_repo_name }}
+              {% endif %}
+          when: item.stat.exists
+          with_items: "{{ dir.results }}"
+
         - name: Move directory if it exists
-          command: >
-            {% if item.item == 'dist' %}
-            mv /home/ubuntu/{{ frontend_repo_name }}/{{ item.item }}/* /var/www/{{ frontend_repo_name }}
-            {% else %}
-            mv /home/ubuntu/{{ frontend_repo_name }}/{{ item.item }} /var/www/{{ frontend_repo_name }}
-            {% endif %}
+          command: "{{ move_command }}"
           when: item.stat.exists
           become: yes
           with_items: "{{ dir.results }}"
-      tags: ['move']
+      tags: ['move']      
       
     - name: configure pm2 with template
       become: yes
