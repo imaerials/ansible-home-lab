@@ -165,12 +165,17 @@
             - dist
 
         - name: Move directory if it exists
-          command: "mv /home/ubuntu/{{ frontend_repo_name }}/{{ item.item }} /var/www/{{ frontend_repo_name }}"
+          command: >
+            {% if item.item == 'dist' %}
+            mv /home/ubuntu/{{ frontend_repo_name }}/{{ item.item }}/* /var/www/{{ frontend_repo_name }}
+            {% else %}
+            mv /home/ubuntu/{{ frontend_repo_name }}/{{ item.item }} /var/www/{{ frontend_repo_name }}
+            {% endif %}
           when: item.stat.exists
           become: yes
           with_items: "{{ dir.results }}"
       tags: ['move']
-
+      
     - name: configure pm2 with template
       become: yes
       template:
