@@ -82,12 +82,14 @@
         name:
           - mongodb-org
         state: present
+      tags: ['mongodb']
 
     - name: Start mongod service
       become: yes
       service:
         name: mongod
         state: started
+      tags: ['mongodb']
 
     - name: Install pm2 globally
       become: yes
@@ -130,7 +132,7 @@
         src: "/home/semaphore/keys/{{ key_name }}"
         dest: "/home/ubuntu/.ssh/{{ key_name }}"
         mode: '0600'
-      tags: ['gitclone']
+      tags: ['backend','frontend']
 
 
     - name: Clone FrontEnd GitHub private repository
@@ -139,7 +141,7 @@
         dest: "/home/ubuntu/{{ frontend_repo_name }}"
         key_file: "/home/ubuntu/.ssh/{{ key_name }}"
         accept_hostkey: yes
-      tags: ['gitclone']
+      tags: ['frontend']
 
 
 
@@ -149,13 +151,20 @@
         dest: "/home/ubuntu/{{ backend_repo_name }}"
         key_file: "/home/ubuntu/.ssh/{{ key_name }}"
         accept_hostkey: yes
-      tags: ['gitclone']
+      tags: ['backend']
+
+    - name: Create a new folder in the backend directory
+      become: yes
+      file:
+        path: "/home/ubuntu/{{ backend_repo_name }}/new_folder"
+        state: directory
+      tags: ['backend']
     
     - name: Delete copied SSH key
       file:
        path: '/home/ubuntu/.ssh/{{ key_name }}'
        state: absent
-      tags: ['gitclone']
+      tags: ['backend','frontend']
 
     - name: Build Front 
       become: yes
@@ -168,7 +177,7 @@
     - name: Move FrontEnd repository
       become: yes
       command: mv /home/ubuntu/{{ frontend_repo_name }}/build /var/www/{{ frontend_repo_name }}
-      tags: ['move']
+      tags: ['frontend']
 
     - name: configure pm2 with template
       become: yes
@@ -176,7 +185,7 @@
         src: pm2.config.js.j2
         dest: /home/ubuntu/{{ backend_repo_name }}/ecosystem.config.cjs
         mode: '0644'
-      tags: ['pm2config']
+      tags: ['pm2config','backend']
 
     - name: start pm2 for backend
       become: yes
@@ -184,11 +193,11 @@
         cd /home/ubuntu/{{ backend_repo_name }}
         npm install
         pm2 start ecosystem.config.cjs --env production
-      tags: ['pm2start']
+      tags: ['pm2start','backend']
       
     - name: Restart Nginx
       become: yes
       service:
         name: nginx
         state: restarted
-      tags: ['nginx']
+      tags: ['nginx','frontend','backend']
