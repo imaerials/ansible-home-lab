@@ -156,7 +156,7 @@
     - name: Create a new folder in the backend directory
       become: yes
       file:
-        path: "/home/ubuntu/{{ backend_repo_name }}/new_folder"
+        path: "/home/ubuntu/{{ backend_repo_name }}/uploads"
         state: directory
       tags: ['backend']
     
