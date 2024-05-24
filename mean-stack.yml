@@ -20,6 +20,17 @@
         cache_valid_time: 3600
       register: update_result
 
+    - name: Reboot the machine if updates were installed
+      become: yes
+      reboot:
+        msg: "Rebooting because of package updates"
+        connect_timeout: 5
+        reboot_timeout: 120
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: whoami
+      when: update_result is changed      
+      
     - name: Install gnupg and curl - mongo db reqs
       become: yes
       apt:
