@@ -141,6 +141,7 @@
         dest: "/home/ubuntu/{{ frontend_repo_name }}"
         key_file: "/home/ubuntu/.ssh/{{ key_name }}"
         accept_hostkey: yes
+        version:  "{{ git_branch }}"
       tags: ['frontend']
 
 
@@ -151,6 +152,7 @@
         dest: "/home/ubuntu/{{ backend_repo_name }}"
         key_file: "/home/ubuntu/.ssh/{{ key_name }}"
         accept_hostkey: yes
+        version:  "{{ git_branch }}"
       tags: ['backend']
 
     - name: Create a new folder in the backend directory
